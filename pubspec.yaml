@@ -1,0 +1,35 @@
+name: makla_app
+description: A meal tracking application with nutritional analysis
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Firebase - For database and storage
+  cloud_firestore: ^4.15.8      # Firestore database
+  firebase_core: ^2.24.2         # Firebase initialization
+  firebase_storage: ^11.6.0      # Upload photos
+  firebase_auth: ^4.16.0         # User authentication
+  
+  # HTTP - For Gemini API calls
+  http: ^1.1.0                   # Make API requests
+  
+  # Image handling
+  image_picker: ^1.0.4           # Take/pick photos
+  
+  # Utilities
+  cupertino_icons: ^1.0.2        # iOS-style icons
+  intl: ^0.18.1                  # Date formatting
+  
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

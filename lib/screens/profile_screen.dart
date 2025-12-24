@@ -1,10 +1,19 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:makla_app/providers/auth_provider.dart';
+import 'package:makla_app/screens/loading_screen.dart';
 import 'package:makla_app/utils/app_theme.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  final List<CameraDescription> cameras;
+  // Constructor
+  const ProfileScreen({super.key, required this.cameras});
 
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     // Dummy user data
@@ -35,56 +44,57 @@ class ProfileScreen extends StatelessWidget {
               style: AppTextStyles.body.copyWith(color: Colors.grey[600]),
             ),
             const SizedBox(height: 30),
-            _buildProfileMenu(context),
+            _buildProfileMenu(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProfileMenu(BuildContext context) {
+  Widget _buildProfileMenu() {
     return Container(
       color: AppColors.white,
       child: Column(
         children: [
           _buildMenuItem(
-            context,
             icon: Icons.person_outline,
             title: 'Account',
             onTap: () {},
           ),
           _buildMenuItem(
-            context,
             icon: Icons.replay,
             title: 'Restart Test',
             onTap: () {},
           ),
+          _buildMenuItem(icon: Icons.help_outline, title: 'Help', onTap: () {}),
           _buildMenuItem(
-            context,
-            icon: Icons.help_outline,
-            title: 'Help',
-            onTap: () {},
-          ),
-          _buildMenuItem(
-            context,
             icon: Icons.info_outline,
             title: 'Information',
             onTap: () {},
           ),
           _buildMenuItem(
-            context,
             icon: Icons.bar_chart_outlined,
             title: 'Statistics',
             onTap: () {},
           ),
           const Divider(height: 1),
           _buildMenuItem(
-            context,
             icon: Icons.exit_to_app,
             title: 'Sign Out',
             color: Colors.red,
             onTap: () async {
               await authService.value.signOut();
+              if (mounted) {
+                // Navegar al WelcomeScreen o LoadingScreen
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        LoadingScreen(cameras: widget.cameras),
+                  ),
+                  (route) => false, // elimina todas las rutas anteriores
+                );
+              }
+              debugPrint("USER SIGNED OUT");
             },
           ),
         ],
@@ -92,8 +102,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuItem(
-    BuildContext context, {
+  Widget _buildMenuItem({
     required IconData icon,
     required String title,
     Color? color,

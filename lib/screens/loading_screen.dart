@@ -1,8 +1,10 @@
 import 'dart:async'; // for the Timer()
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:makla_app/screens/main_screen.dart';
 import 'package:makla_app/screens/welcome_screen.dart';
 import 'package:makla_app/utils/app_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // LOADINGSCREEN WIDGET
 // It can change over time
@@ -26,21 +28,32 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
   @override
-  // Called once when the widget is inserted into the tree (best place to start timers, fetch data, initilize controlers)
   void initState() {
-    super.initState(); // Calls parent init, Always required
-    Timer(const Duration(seconds: 5), () {
-      // Checks if widget is still on screen, VERY important for async code
-      if (mounted) {
-        // Navigates to another screen, pushReplacement -> remove current screen and replaces it with new one
-        Navigator.of(context).pushReplacement(
-          // Defines a route (page transition)
-          MaterialPageRoute(
-            builder: (context) => WelcomeScreen(cameras: widget.cameras),
-          ),
-        );
-      }
-    });
+    super.initState();
+    _initApp();
+  }
+
+  Future<void> _initApp() async {
+    // Small delay to show the splash (optional)
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      // ❌ User NOT logged in → Welcome
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => WelcomeScreen(cameras: widget.cameras),
+        ),
+      );
+    } else {
+      // ✅ User logged in → Main app
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => MainScreen(cameras: widget.cameras)),
+      );
+    }
   }
 
   @override

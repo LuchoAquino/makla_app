@@ -26,7 +26,7 @@ class _MainScreenState extends State<MainScreen> {
       HomeScreen(onNavigateToTab: _onItemTapped),
       CameraScreen(cameras: widget.cameras),
       const ChatScreen(),
-      const ProfileScreen(),
+      ProfileScreen(cameras: widget.cameras),
     ];
   }
 
@@ -39,10 +39,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _pages,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: _pages),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

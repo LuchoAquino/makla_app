@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:makla_app/screens/loading_screen.dart';
+import 'package:makla_app/providers/auth_gate.dart';
 import 'package:makla_app/utils/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:makla_app/firebase_options.dart';
@@ -13,6 +14,15 @@ Future<void> main() async {
 
   // Initializing Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // 🔍 DEBUG: listen auth changes
+  FirebaseAuth.instance.authStateChanges().listen((user) {
+    if (user == null) {
+      debugPrint("🔴 USER LOGGED OUT");
+    } else {
+      debugPrint("🟢 USER LOGGED IN: ${user.email}");
+    }
+  });
 
   // Starts the Flutter app, Injects cameras into the widget tree
   runApp(MyApp(cameras: cameras));
@@ -47,7 +57,9 @@ class MyApp extends StatelessWidget {
         ),
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
       ),
-      home: LoadingScreen(cameras: cameras),
+      // home: LoadingScreen(cameras: cameras),
+      home: AuthGate(cameras: cameras),
+
       debugShowCheckedModeBanner: false, // Removes debug banner
     );
   }

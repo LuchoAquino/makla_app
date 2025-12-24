@@ -1,6 +1,5 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:makla_app/screens/login_screen.dart';
 import 'package:makla_app/screens/user_info_form.dart';
 import 'package:makla_app/utils/app_theme.dart';
 

@@ -1,70 +1,83 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
-  String uid;
-  String? name;
-  String? email;
-  DateTime? dateOfBirth;
-  String? gender;
-  double? height;
-  double? weight;
-  List<String>? purposes;
-  List<String>? allergies;
-  List<String>? diseases;
-  String? healthGoal;
-  List<String>? dietaryPreferences;
-  List<String>? religiousRestrictions;
+  final String id;
+  final String name;
+  final String email;
+  final int age;
+  final double weight;
+  final double height;
+  final String gender;
+  final String goal;
+  final DateTime? createdAt;
 
   UserModel({
-    required this.uid,
-    this.name,
-    this.email,
-    this.dateOfBirth,
-    this.gender,
-    this.height,
-    this.weight,
-    this.purposes,
-    this.allergies,
-    this.diseases,
-    this.healthGoal,
-    this.dietaryPreferences,
-    this.religiousRestrictions,
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.age,
+    required this.weight,
+    required this.height,
+    required this.gender,
+    required this.goal,
+    this.createdAt,
   });
 
-  // Factory constructor for creating a new UserModel instance from a map
-  factory UserModel.fromMap(Map<String, dynamic> data, String documentId) {
-    return UserModel(
-      uid: documentId,
-      name: data['name'],
-      email: data['email'],
-      dateOfBirth: data['dateOfBirth']?.toDate(),
-      gender: data['gender'],
-      height: data['height']?.toDouble(),
-      weight: data['weight']?.toDouble(),
-      purposes: List<String>.from(data['purposes'] ?? []),
-      allergies: List<String>.from(data['allergies'] ?? []),
-      diseases: List<String>.from(data['diseases'] ?? []),
-      healthGoal: data['healthGoal'],
-      dietaryPreferences: List<String>.from(data['dietaryPreferences'] ?? []),
-      religiousRestrictions: List<String>.from(
-        data['religiousRestrictions'] ?? [],
-      ),
-    );
-  }
-
-  // Method to convert a UserModel instance to a map
-  Map<String, dynamic> toMap() {
+  // Convert UserModel to JSON for Firebase
+  Map<String, dynamic> toJson() {
     return {
       'name': name,
       'email': email,
-      'dateOfBirth': dateOfBirth,
-      'gender': gender,
-      'height': height,
+      'age': age,
       'weight': weight,
-      'purposes': purposes,
-      'allergies': allergies,
-      'diseases': diseases,
-      'healthGoal': healthGoal,
-      'dietaryPreferences': dietaryPreferences,
-      'religiousRestrictions': religiousRestrictions,
+      'height': height,
+      'gender': gender,
+      'goal': goal,
+      'createdAt': createdAt != null
+          ? Timestamp.fromDate(createdAt!)
+          : FieldValue.serverTimestamp(),
     };
+  }
+
+  // Create UserModel from Firebase JSON
+  factory UserModel.fromJson(Map<String, dynamic> json, String id) {
+    return UserModel(
+      id: id,
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      age: json['age'] ?? 0,
+      weight: (json['weight'] ?? 0).toDouble(),
+      height: (json['height'] ?? 0).toDouble(),
+      gender: json['gender'] ?? '',
+      goal: json['goal'] ?? '',
+      createdAt: json['createdAt'] != null
+          ? (json['createdAt'] as Timestamp).toDate()
+          : null,
+    );
+  }
+
+  // Create a copy with updated fields
+  UserModel copyWith({
+    String? id,
+    String? name,
+    String? email,
+    int? age,
+    double? weight,
+    double? height,
+    String? gender,
+    String? goal,
+    DateTime? createdAt,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      age: age ?? this.age,
+      weight: weight ?? this.weight,
+      height: height ?? this.height,
+      gender: gender ?? this.gender,
+      goal: goal ?? this.goal,
+      createdAt: createdAt ?? this.createdAt,
+    );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:makla_app/screens/user_info_form.dart';
+import 'package:makla_app/screens/main_screen.dart';
+import 'package:makla_app/screens/pre_test_screen.dart';
 import 'package:makla_app/utils/app_theme.dart';
+import 'package:makla_app/providers/auth_provider.dart';
 
 // We use StatefulWidget because the screen changes over time (login/sign-up toggle).
 class LoginScreen extends StatefulWidget {
@@ -14,6 +16,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isLogin = true; // To toggle between Login and Sign Up
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   // Defines UI layout -> full screen layout: background, app bar, body
@@ -58,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         const SizedBox(height: 16),
         TextFormField(
+          controller: _emailController,
           decoration: const InputDecoration(
             labelText: 'Email',
             border: OutlineInputBorder(),
@@ -66,6 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         const SizedBox(height: 16),
         TextFormField(
+          controller: _passwordController,
           decoration: const InputDecoration(
             labelText: 'Password',
             border: OutlineInputBorder(),
@@ -81,14 +87,45 @@ class _LoginScreenState extends State<LoginScreen> {
               borderRadius: BorderRadius.circular(30),
             ),
           ),
-          onPressed: () {
-            // Mock navigation to the user info form after login/signup
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => UserInfoForm(cameras: widget.cameras),
-              ),
-            );
+          onPressed: () async {
+            try {
+              if (_isLogin) {
+                await authService.value.signIn(
+                  email: _emailController.text.trim(),
+                  password: _passwordController.text.trim(),
+                );
+
+                if (!mounted) return;
+
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => MainScreen(cameras: widget.cameras),
+                  ),
+                );
+              } else {
+                await authService.value.createAccount(
+                  email: _emailController.text.trim(),
+                  password: _passwordController.text.trim(),
+                );
+
+                if (!mounted) return;
+
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        PreTestScreen(cameras: widget.cameras),
+                  ),
+                );
+              }
+            } catch (e) {
+              if (!mounted) return;
+
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(e.toString())));
+            }
           },
+
           child: Text(
             _isLogin ? 'Login' : 'Sign Up',
             style: AppTextStyles.button,

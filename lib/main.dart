@@ -2,12 +2,17 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:makla_app/screens/loading_screen.dart';
 import 'package:makla_app/utils/app_theme.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:makla_app/firebase_options.dart';
 
 Future<void> main() async {
   // Main function is Future because I'm working with async function
   WidgetsFlutterBinding.ensureInitialized(); // Initializes Flutter before using native plugins
 
   final cameras = await availableCameras();
+
+  // Initializing Firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Starts the Flutter app, Injects cameras into the widget tree
   runApp(MyApp(cameras: cameras));

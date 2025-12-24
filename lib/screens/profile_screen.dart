@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:makla_app/providers/auth_provider.dart';
 import 'package:makla_app/utils/app_theme.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -82,8 +83,8 @@ class ProfileScreen extends StatelessWidget {
             icon: Icons.exit_to_app,
             title: 'Sign Out',
             color: Colors.red,
-            onTap: () {
-              // TODO: Implement sign out logic
+            onTap: () async {
+              await authService.value.signOut();
             },
           ),
         ],

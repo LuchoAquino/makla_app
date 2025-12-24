@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:makla_app/screens/login_screen.dart';
+import 'package:makla_app/screens/user_info_form.dart';
 import 'package:makla_app/utils/app_theme.dart';
 
 class PreTestScreen extends StatelessWidget {
@@ -34,7 +35,7 @@ class PreTestScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (context) => LoginScreen(cameras: cameras),
+                    builder: (context) => UserInfoForm(cameras: cameras),
                   ),
                 );
               },

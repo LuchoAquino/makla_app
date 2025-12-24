@@ -1,6 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:makla_app/screens/pre_test_screen.dart';
+import 'package:makla_app/screens/login_screen.dart';
 import 'package:makla_app/utils/app_theme.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -40,7 +40,7 @@ class WelcomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (context) => PreTestScreen(cameras: cameras),
+                    builder: (context) => LoginScreen(cameras: cameras),
                   ),
                 );
               },

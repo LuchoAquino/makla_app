@@ -82,7 +82,16 @@ class DailyStatsModel {
   }
 
   // Create updated stats after adding a meal
+<<<<<<< HEAD
   DailyStatsModel addMeal(double calories, double protein, double carbs, double fat) {
+=======
+  DailyStatsModel addMeal(
+    double calories,
+    double protein,
+    double carbs,
+    double fat,
+  ) {
+>>>>>>> 8920d388ab2f14077a0648e02eabb9a4ff5b687a
     return DailyStatsModel(
       userId: userId,
       dateString: dateString,
@@ -95,4 +104,8 @@ class DailyStatsModel {
       lastUpdated: DateTime.now(),
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 8920d388ab2f14077a0648e02eabb9a4ff5b687a

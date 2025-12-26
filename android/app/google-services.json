@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "609894706878",
+    "project_id": "maklaapp-8972c",
+    "storage_bucket": "maklaapp-8972c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:609894706878:android:e22b6c09ba548b1f75b8ef",
+        "android_client_info": {
+          "package_name": "com.example.makla_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCq00O5b_XGZbrMyORmDGzpMPmknu4BCSA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -38,4 +38,8 @@ class NutritionModel {
       sugar: (json['sugar'] ?? 0).toDouble(),
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 8920d388ab2f14077a0648e02eabb9a4ff5b687a

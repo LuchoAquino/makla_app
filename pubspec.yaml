@@ -1,5 +1,6 @@
 name: makla_app
 <<<<<<< HEAD
+<<<<<<< HEAD
 description: A meal tracking application with nutritional analysis
 version: 1.0.0+1
 
@@ -35,6 +36,8 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 =======
+=======
+>>>>>>> 8920d388ab2f14077a0648e02eabb9a4ff5b687a
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -70,6 +73,14 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+<<<<<<< HEAD
+=======
+  google_fonts: ^6.3.3
+  fl_chart: ^1.1.1
+  camera: ^0.11.3
+  firebase_core: ^4.3.0
+  firebase_auth: ^6.1.3
+>>>>>>> 8920d388ab2f14077a0648e02eabb9a4ff5b687a
 
 dev_dependencies:
   flutter_test:
@@ -123,4 +134,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+<<<<<<< HEAD
 >>>>>>> a7d194b (setup/: Initialize project and folder structure)
+=======
+>>>>>>> 8920d388ab2f14077a0648e02eabb9a4ff5b687a

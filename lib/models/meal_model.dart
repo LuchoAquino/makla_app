@@ -48,4 +48,8 @@ class MealModel {
       ingredients: List<String>.from(json['ingredients'] ?? []),
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 8920d388ab2f14077a0648e02eabb9a4ff5b687a

@@ -33,8 +33,13 @@ class UserModel {
       'height': height,
       'gender': gender,
       'goal': goal,
+<<<<<<< HEAD
       'createdAt': createdAt != null 
           ? Timestamp.fromDate(createdAt!) 
+=======
+      'createdAt': createdAt != null
+          ? Timestamp.fromDate(createdAt!)
+>>>>>>> 8920d388ab2f14077a0648e02eabb9a4ff5b687a
           : FieldValue.serverTimestamp(),
     };
   }
@@ -50,8 +55,13 @@ class UserModel {
       height: (json['height'] ?? 0).toDouble(),
       gender: json['gender'] ?? '',
       goal: json['goal'] ?? '',
+<<<<<<< HEAD
       createdAt: json['createdAt'] != null 
           ? (json['createdAt'] as Timestamp).toDate() 
+=======
+      createdAt: json['createdAt'] != null
+          ? (json['createdAt'] as Timestamp).toDate()
+>>>>>>> 8920d388ab2f14077a0648e02eabb9a4ff5b687a
           : null,
     );
   }
@@ -80,4 +90,8 @@ class UserModel {
       createdAt: createdAt ?? this.createdAt,
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 8920d388ab2f14077a0648e02eabb9a4ff5b687a

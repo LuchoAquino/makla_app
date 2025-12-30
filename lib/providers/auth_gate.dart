@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:makla_app/providers/auth_provider.dart';
 import 'package:makla_app/screens/loading_screen.dart';

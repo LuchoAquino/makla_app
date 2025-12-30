@@ -8,7 +8,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Dummy user name
-    const String userName = 'Lucho';
+    const String userName = 'Luis';
 
     return Scaffold(
       body: SafeArea(

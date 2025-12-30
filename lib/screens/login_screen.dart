@@ -4,6 +4,9 @@ import 'package:makla_app/screens/main_screen.dart';
 import 'package:makla_app/screens/pre_test_screen.dart';
 import 'package:makla_app/utils/app_theme.dart';
 import 'package:makla_app/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:makla_app/providers/db_user_provider.dart';
+import 'package:makla_app/models/user_model.dart';
 
 // We use StatefulWidget because the screen changes over time (login/sign-up toggle).
 class LoginScreen extends StatefulWidget {
@@ -16,6 +19,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isLogin = true; // To toggle between Login and Sign Up
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -55,6 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         if (!_isLogin)
           TextFormField(
+            controller: _nameController,
             decoration: const InputDecoration(
               labelText: 'Name',
               border: OutlineInputBorder(),
@@ -90,10 +95,12 @@ class _LoginScreenState extends State<LoginScreen> {
           onPressed: () async {
             try {
               if (_isLogin) {
+                // LOGIN LOGIC
                 await authService.value.signIn(
                   email: _emailController.text.trim(),
                   password: _passwordController.text.trim(),
                 );
+                // Navigation is handled by AuthGate automatically,
 
                 if (!mounted) return;
 
@@ -103,13 +110,40 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 );
               } else {
-                await authService.value.createAccount(
+                // --- SIGN UP LOGIC ---
+
+                // 1. Create Auth Account
+                final userCredential = await authService.value.createAccount(
                   email: _emailController.text.trim(),
                   password: _passwordController.text.trim(),
                 );
 
-                if (!mounted) return;
+                // 2. Prepare the Data Model
+                // We create a basic user.
+                // Note: Age/Weight/Height are 0 for now because we fill them in TestScreen
+                UserModel newUser = UserModel(
+                  id: userCredential.user!.uid,
+                  name: _nameController.text.trim(),
+                  email: _emailController.text.trim(),
+                  age: 20,
+                  weight: 100.0,
+                  height: 180.0,
+                  gender: "Male",
+                  goal: "Be happy",
+                  createdAt: DateTime.now(),
+                );
 
+                // 3. Save to Firestore using your new DBProvider
+                // We use 'listen: false' because we are inside a function, not the UI
+                if (context.mounted) {
+                  await Provider.of<DbUserProvider>(
+                    context,
+                    listen: false,
+                  ).saveNewUser(newUser);
+                }
+
+                // 4. Navigate to PreTestScreen
+                if (!mounted) return;
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) =>

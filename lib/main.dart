@@ -5,6 +5,8 @@ import 'package:makla_app/providers/auth_gate.dart';
 import 'package:makla_app/utils/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:makla_app/firebase_options.dart';
+import 'package:makla_app/providers/db_user_provider.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   // Main function is Future because I'm working with async function
@@ -25,7 +27,13 @@ Future<void> main() async {
   });
 
   // Starts the Flutter app, Injects cameras into the widget tree
-  runApp(MyApp(cameras: cameras));
+  runApp(
+    // Wrap MyApp in MultiProvider
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => DbUserProvider())],
+      child: MyApp(cameras: cameras),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

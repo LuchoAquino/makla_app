@@ -1,6 +1,9 @@
 import 'package:camera/camera.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // To get the current UID
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'; // To listen to the database
 import 'package:makla_app/providers/auth_provider.dart';
+import 'package:makla_app/providers/db_user_provider.dart'; // Your Logic Layer
 import 'package:makla_app/screens/loading_screen.dart';
 import 'package:makla_app/utils/app_theme.dart';
 
@@ -15,11 +18,20 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
-  Widget build(BuildContext context) {
-    // Dummy user data
-    const String userName = 'Lucho Aquino';
-    const String userEmail = 'luchoaquino1101@gmail.com';
+  void initState() {
+    super.initState();
+    // TRIGGER: When the screen opens, fetch the user data
+    // We use 'addPostFrameCallback' to ensure the BuildContext is ready
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid != null) {
+        Provider.of<DbUserProvider>(context, listen: false).getUserData(uid);
+      }
+    });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -27,31 +39,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 1,
       ),
       backgroundColor: AppColors.lightGrey,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 30),
-            const CircleAvatar(
-              radius: 60,
-              backgroundColor: AppColors.secondary,
-              child: Icon(Icons.person, size: 80, color: AppColors.white),
+      // CONSUMER: Listens to DBProvider. If it updates, this part redraws.
+      body: Consumer<DbUserProvider>(
+        builder: (context, dbProvider, child) {
+          // 1. Loading State
+          if (dbProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // 2. Data is Ready
+          final user = dbProvider.userCurrent;
+
+          // Safety check (in case data is null for some reason)
+          if (user == null) {
+            return const Center(child: Text("User info not found"));
+          }
+
+          // 3. Show Real Data
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 30),
+                const CircleAvatar(
+                  radius: 60,
+                  backgroundColor: AppColors.secondary,
+                  child: Icon(Icons.person, size: 80, color: AppColors.white),
+                ),
+                const SizedBox(height: 15),
+                // REAL NAME
+                Text(user.name, style: AppTextStyles.subtitle),
+                const SizedBox(height: 5),
+                // REAL EMAIL
+                Text(
+                  user.email,
+                  style: AppTextStyles.body.copyWith(color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 30),
+                _buildProfileMenu(context),
+              ],
             ),
-            const SizedBox(height: 15),
-            Text(userName, style: AppTextStyles.subtitle),
-            const SizedBox(height: 5),
-            Text(
-              userEmail,
-              style: AppTextStyles.body.copyWith(color: Colors.grey[600]),
-            ),
-            const SizedBox(height: 30),
-            _buildProfileMenu(),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildProfileMenu() {
+  Widget _buildProfileMenu(BuildContext context) {
     return Container(
       color: AppColors.white,
       child: Column(
@@ -59,11 +92,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _buildMenuItem(
             icon: Icons.person_outline,
             title: 'Account',
-            onTap: () {},
+            onTap: () {
+              // TODO: Navigate to Edit Profile Screen
+            },
           ),
           _buildMenuItem(
             icon: Icons.replay,
-            title: 'Restart Test',
+            title: 'Do again the Test',
             onTap: () {},
           ),
           _buildMenuItem(icon: Icons.help_outline, title: 'Help', onTap: () {}),

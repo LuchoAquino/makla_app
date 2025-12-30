@@ -23,8 +23,9 @@ class UserModel {
     this.createdAt,
   });
 
-  // Convert UserModel to JSON for Firebase
+  // Convert UserModel to JSON for Firebase (from the App to Firebase (Store/update))
   Map<String, dynamic> toJson() {
+    // Firebase understands Map<String, dynamic>
     return {
       'name': name,
       'email': email,
@@ -39,19 +40,22 @@ class UserModel {
     };
   }
 
-  // Create UserModel from Firebase JSON
-  factory UserModel.fromJson(Map<String, dynamic> json, String id) {
+  // Create UserModel from Firebase JSON (from Firebase to the App)
+  factory UserModel.fromSnapshot(
+    DocumentSnapshot<Map<String, dynamic>> document,
+  ) {
+    final data = document.data()!;
     return UserModel(
-      id: id,
-      name: json['name'] ?? '',
-      email: json['email'] ?? '',
-      age: json['age'] ?? 0,
-      weight: (json['weight'] ?? 0).toDouble(),
-      height: (json['height'] ?? 0).toDouble(),
-      gender: json['gender'] ?? '',
-      goal: json['goal'] ?? '',
-      createdAt: json['createdAt'] != null
-          ? (json['createdAt'] as Timestamp).toDate()
+      id: document.id,
+      name: data['name'] ?? '',
+      email: data['email'] ?? '',
+      age: data['age'] ?? 0,
+      weight: (data['weight'] ?? 0).toDouble(),
+      height: (data['height'] ?? 0).toDouble(),
+      gender: data['gender'] ?? '',
+      goal: data['goal'] ?? '',
+      createdAt: data['createdAt'] != null
+          ? (data['createdAt'] as Timestamp).toDate()
           : null,
     );
   }

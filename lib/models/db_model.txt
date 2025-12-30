@@ -1,0 +1,29 @@
+Firestore
+└── users (collection)
+    └── {userId} (document)
+        ├── id: string
+        ├── name: string
+        ├── email: string
+        ├── age: number
+        ├── weight: number
+        ├── height: number
+        ├── gender: string
+        ├── goal: string
+        ├── createdAt: timestamp
+        │
+        └── meals (subcollection)
+            └── {mealId} (document)
+                ├── id: string
+                ├── dishName: string
+                ├── description: string
+                ├── imageUrl: string
+                ├── timestamp: timestamp
+                ├── mealType: string
+                ├── ingredients: array<string>
+                └── nutritionalInfo (map)
+                    ├── calories: number
+                    ├── protein: number
+                    ├── carbs: number
+                    ├── fat: number
+                    ├── fiber: number
+                    └── sugar: number

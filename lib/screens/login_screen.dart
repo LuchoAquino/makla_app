@@ -100,8 +100,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   email: _emailController.text.trim(),
                   password: _passwordController.text.trim(),
                 );
-                // Navigation is handled by AuthGate automatically,
 
+                // Navigation to MainScreen,
                 if (!mounted) return;
 
                 Navigator.of(context).pushReplacement(
@@ -125,11 +125,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   id: userCredential.user!.uid,
                   name: _nameController.text.trim(),
                   email: _emailController.text.trim(),
-                  age: 20,
-                  weight: 100.0,
-                  height: 180.0,
-                  gender: "Male",
-                  goal: "Be happy",
+                  dateOfBirth: DateTime(2000, 1, 1),
+                  weight: 0.0,
+                  height: 0.0,
+                  gender: "",
+                  goal: "",
+                  purposes: [],
+                  restrictions: [],
+                  diseases: [],
                   createdAt: DateTime.now(),
                 );
 

@@ -1,7 +1,9 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:makla_app/providers/db_user_provider.dart';
 import 'package:makla_app/screens/main_screen.dart';
 import 'package:makla_app/utils/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class UserInfoForm extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -16,7 +18,7 @@ class _UserInfoFormState extends State<UserInfoForm> {
   int _currentPage = 0;
 
   // Form data
-  DateTime? _selectedDate;
+  DateTime? _selectedDateBirthday;
   String? _selectedGender;
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
@@ -133,19 +135,48 @@ class _UserInfoFormState extends State<UserInfoForm> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_currentPage < 3) {
                       _pageController.nextPage(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.ease,
                       );
                     } else {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              MainScreen(cameras: widget.cameras),
-                        ),
-                      );
+                      try {
+                        double height = double.parse(
+                          _heightController.text.trim(),
+                        );
+                        double weight = double.parse(
+                          _weightController.text.trim(),
+                        );
+                        // Collect all data
+                        Map<String, dynamic> formData = {
+                          'height': height,
+                          'weight': weight,
+                          'gender': _selectedGender,
+                          'dateOfBirth': _selectedDateBirthday,
+                          'purposes': _selectedPurposes,
+                          'restrictions': _selectedRestrictions,
+                          'diseases': _selectedDiseases,
+                          'goal': _selectedGoal,
+                        };
+
+                        await Provider.of<DbUserProvider>(
+                          context,
+                          listen: false,
+                        ).updateUserData(formData);
+
+                        if (context.mounted) {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  MainScreen(cameras: widget.cameras),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        debugPrint("Error completing form: $e");
+                      }
                     }
                   },
                   child: Text(
@@ -176,13 +207,13 @@ class _UserInfoFormState extends State<UserInfoForm> {
             onTap: () async {
               final DateTime? picked = await showDatePicker(
                 context: context,
-                initialDate: _selectedDate ?? DateTime.now(),
+                initialDate: _selectedDateBirthday ?? DateTime.now(),
                 firstDate: DateTime(1900),
                 lastDate: DateTime.now(),
               );
-              if (picked != null && picked != _selectedDate) {
+              if (picked != null && picked != _selectedDateBirthday) {
                 setState(() {
-                  _selectedDate = picked;
+                  _selectedDateBirthday = picked;
                 });
               }
             },
@@ -196,9 +227,9 @@ class _UserInfoFormState extends State<UserInfoForm> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    _selectedDate == null
+                    _selectedDateBirthday == null
                         ? 'Select your birth date'
-                        : "${_selectedDate!.toLocal()}".split(' ')[0],
+                        : "${_selectedDateBirthday!.toLocal()}".split(' ')[0],
                   ),
                   const Icon(Icons.calendar_today),
                 ],

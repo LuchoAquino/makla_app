@@ -15,8 +15,6 @@ class DbUserProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   // 1. CREATE USER (Call this after SignUp)
-
-  // 1. CREATE USER (Call this after SignUp)
   Future<void> saveNewUser(UserModel userCurrent) async {
     try {
       _isLoading = true; // Start loading state
@@ -55,6 +53,42 @@ class DbUserProvider extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint("Error fetching user: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // 3. UPDATE USER DATA
+  Future<void> updateUserData(Map<String, dynamic> data) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      if (_userCurrent == null) throw "No user logged in";
+
+      // 1. Update Firestore
+      await _db.collection("users").doc(_userCurrent!.id).update(data);
+
+      // 2. Update local copy (Memory)
+      _userCurrent = _userCurrent!.copyWith(
+        // Use the data from the map or keep the current value if it's null
+        weight: data.containsKey('weight')
+            ? data['weight']
+            : _userCurrent!.weight,
+        height: data.containsKey('height')
+            ? data['height']
+            : _userCurrent!.height,
+        gender: data['gender'] ?? _userCurrent!.gender,
+        goal: data['goal'] ?? _userCurrent!.goal,
+        dateOfBirth: data['dateOfBirth'] ?? _userCurrent!.dateOfBirth,
+        purposes: data['purposes'] ?? _userCurrent!.purposes,
+        restrictions: data['restrictions'] ?? _userCurrent!.restrictions,
+        diseases: data['diseases'] ?? _userCurrent!.diseases,
+      );
+    } catch (e) {
+      debugPrint("Error updating user: $e");
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();

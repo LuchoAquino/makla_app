@@ -5,6 +5,7 @@ import 'package:makla_app/screens/main_screen.dart';
 import 'package:makla_app/screens/welcome_screen.dart';
 import 'package:camera/camera.dart';
 
+// AuthGate decides which screen to show based on authentication state -> It is useful if I start session in other moment.
 class AuthGate extends StatelessWidget {
   final List<CameraDescription> cameras;
 

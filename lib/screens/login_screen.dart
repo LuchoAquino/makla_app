@@ -130,6 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 0.0,
                   gender: "",
                   goal: "",
+                  checkInFrequency: "",
                   purposes: [],
                   restrictions: [],
                   diseases: [],

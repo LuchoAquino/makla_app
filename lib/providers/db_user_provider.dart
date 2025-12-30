@@ -81,6 +81,8 @@ class DbUserProvider extends ChangeNotifier {
             : _userCurrent!.height,
         gender: data['gender'] ?? _userCurrent!.gender,
         goal: data['goal'] ?? _userCurrent!.goal,
+        checkInFrequency:
+            data['checkInFrequency'] ?? _userCurrent!.checkInFrequency,
         dateOfBirth: data['dateOfBirth'] ?? _userCurrent!.dateOfBirth,
         purposes: data['purposes'] ?? _userCurrent!.purposes,
         restrictions: data['restrictions'] ?? _userCurrent!.restrictions,

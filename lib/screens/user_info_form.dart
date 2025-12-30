@@ -17,6 +17,15 @@ class _UserInfoFormState extends State<UserInfoForm> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
+  // Custom Inputs
+  final TextEditingController _customPurposeController =
+      TextEditingController();
+  final TextEditingController _customRestrictionController =
+      TextEditingController();
+  final TextEditingController _customDiseaseController =
+      TextEditingController();
+  final TextEditingController _customGoalController = TextEditingController();
+
   // Form data
   DateTime? _selectedDateBirthday;
   String? _selectedGender;
@@ -40,7 +49,6 @@ class _UserInfoFormState extends State<UserInfoForm> {
 
   // State for Dietary Page
   final List<String> _restrictionsOptions = [
-    'None',
     'Peanuts',
     'Dairy',
     'Gluten',
@@ -50,7 +58,6 @@ class _UserInfoFormState extends State<UserInfoForm> {
   ];
   final List<String> _selectedRestrictions = [];
   final List<String> _diseaseOptions = [
-    'None',
     'Diabetes',
     'Hypertension',
     'Celiac Disease',
@@ -58,7 +65,7 @@ class _UserInfoFormState extends State<UserInfoForm> {
   ];
   final List<String> _selectedDiseases = [];
 
-  // State for Goals Page
+  // State for Goals and Frequency Page
   final List<String> _goalOptions = [
     'Lose Weight',
     'Maintain Weight',
@@ -66,6 +73,31 @@ class _UserInfoFormState extends State<UserInfoForm> {
     'Build Muscle',
   ];
   String? _selectedGoal;
+
+  final List<String> _frequencyOptions = [
+    'Weekly',
+    'Bi-weekly',
+    'Monthly',
+    'Every 3 Months',
+    'Every 6 Months',
+  ];
+
+  String? _selectedFrequency;
+
+  @override
+  void dispose() {
+    // "Delete" all the controllers to free up resources
+    _pageController.dispose();
+    _heightController.dispose();
+    _weightController.dispose();
+    _customGoalController.dispose();
+    _customPurposeController.dispose();
+    _customRestrictionController.dispose();
+    _customDiseaseController.dispose();
+
+    // IMPORTANTE: Siempre llamar a super.dispose() al final
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +181,7 @@ class _UserInfoFormState extends State<UserInfoForm> {
                         double weight = double.parse(
                           _weightController.text.trim(),
                         );
-                        // Collect all data
+
                         Map<String, dynamic> formData = {
                           'height': height,
                           'weight': weight,
@@ -159,8 +191,8 @@ class _UserInfoFormState extends State<UserInfoForm> {
                           'restrictions': _selectedRestrictions,
                           'diseases': _selectedDiseases,
                           'goal': _selectedGoal,
+                          'checkInFrequency': _selectedFrequency, // NUEVO
                         };
-
                         await Provider.of<DbUserProvider>(
                           context,
                           listen: false,
@@ -189,6 +221,48 @@ class _UserInfoFormState extends State<UserInfoForm> {
           ),
         ),
       ),
+    );
+  }
+
+  // Widget to add custom options
+  Widget _buildAddOptionField({
+    required String hintText,
+    required TextEditingController controller,
+    required Function(String) onAdd,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: hintText,
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        IconButton(
+          onPressed: () {
+            if (controller.text.isNotEmpty) {
+              onAdd(controller.text.trim());
+              controller.clear();
+            }
+          },
+          icon: const Icon(
+            Icons.add_circle,
+            color: AppColors.secondary,
+            size: 30,
+          ),
+        ),
+      ],
     );
   }
 
@@ -295,27 +369,58 @@ class _UserInfoFormState extends State<UserInfoForm> {
           const SizedBox(height: 16),
           Text('Select all that apply.', style: AppTextStyles.body),
           const SizedBox(height: 16),
+
+          // 1.- Chips for predefined purposes
           Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
-            children: _purposeOptions.map((purpose) {
-              return FilterChip(
-                label: Text(purpose, style: AppTextStyles.chip),
-                selected: _selectedPurposes.contains(purpose),
-                onSelected: (bool selected) {
-                  setState(() {
-                    if (selected) {
-                      _selectedPurposes.add(purpose);
-                    } else {
-                      _selectedPurposes.remove(purpose);
-                    }
-                  });
-                },
-                backgroundColor: AppColors.lightGrey,
-                selectedColor: AppColors.accent.withOpacity(0.5),
-                checkmarkColor: AppColors.secondary,
-              );
-            }).toList(),
+            children: [
+              // Show predefined options
+              ..._purposeOptions.map((purpose) {
+                return FilterChip(
+                  label: Text(purpose, style: AppTextStyles.chip),
+                  selected: _selectedPurposes.contains(purpose),
+                  onSelected: (bool selected) {
+                    setState(() {
+                      selected
+                          ? _selectedPurposes.add(purpose)
+                          : _selectedPurposes.remove(purpose);
+                    });
+                  },
+                  backgroundColor: AppColors.lightGrey,
+                  selectedColor: AppColors.accent.withOpacity(0.5),
+                  checkmarkColor: AppColors.secondary,
+                );
+              }),
+              // Show the CUSTOM ones added by the user
+              ..._selectedPurposes
+                  .where((p) => !_purposeOptions.contains(p))
+                  .map((custom) {
+                    return Chip(
+                      label: Text(custom, style: AppTextStyles.chip),
+                      backgroundColor: AppColors.accent.withOpacity(0.5),
+                      deleteIcon: const Icon(Icons.close, size: 18),
+                      onDeleted: () {
+                        setState(() {
+                          _selectedPurposes.remove(custom);
+                        });
+                      },
+                    );
+                  }),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // 2. Input to add custom purpose
+          _buildAddOptionField(
+            hintText: "Add custom purpose...",
+            controller: _customPurposeController,
+            onAdd: (val) {
+              setState(() {
+                if (!_selectedPurposes.contains(val)) {
+                  _selectedPurposes.add(val);
+                }
+              });
+            },
           ),
         ],
       ),
@@ -337,24 +442,45 @@ class _UserInfoFormState extends State<UserInfoForm> {
           Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
-            children: _restrictionsOptions.map((item) {
-              return FilterChip(
-                label: Text(item, style: AppTextStyles.chip),
-                selected: _selectedRestrictions.contains(item),
-                onSelected: (bool selected) {
-                  setState(() {
-                    if (selected) {
-                      _selectedRestrictions.add(item);
-                    } else {
-                      _selectedRestrictions.remove(item);
-                    }
-                  });
-                },
-                backgroundColor: AppColors.lightGrey,
-                selectedColor: AppColors.accent.withOpacity(0.5),
-              );
-            }).toList(),
+            children: [
+              ..._restrictionsOptions.map((item) {
+                return FilterChip(
+                  label: Text(item, style: AppTextStyles.chip),
+                  selected: _selectedRestrictions.contains(item),
+                  onSelected: (selected) {
+                    setState(() {
+                      selected
+                          ? _selectedRestrictions.add(item)
+                          : _selectedRestrictions.remove(item);
+                    });
+                  },
+                  backgroundColor: AppColors.lightGrey,
+                  selectedColor: AppColors.accent.withOpacity(0.5),
+                );
+              }),
+              // Custom Added Chips
+              ..._selectedRestrictions
+                  .where((r) => !_restrictionsOptions.contains(r))
+                  .map((custom) {
+                    return Chip(
+                      label: Text(custom, style: AppTextStyles.chip),
+                      backgroundColor: AppColors.accent.withOpacity(0.5),
+                      onDeleted: () =>
+                          setState(() => _selectedRestrictions.remove(custom)),
+                    );
+                  }),
+            ],
           ),
+          const SizedBox(height: 10),
+          _buildAddOptionField(
+            hintText: "Add allergy/restriction...",
+            controller: _customRestrictionController,
+            onAdd: (val) => setState(() {
+              if (!_selectedRestrictions.contains(val))
+                _selectedRestrictions.add(val);
+            }),
+          ),
+
           const SizedBox(height: 24),
 
           // Diseases
@@ -363,23 +489,42 @@ class _UserInfoFormState extends State<UserInfoForm> {
           Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
-            children: _diseaseOptions.map((item) {
-              return FilterChip(
-                label: Text(item, style: AppTextStyles.chip),
-                selected: _selectedDiseases.contains(item),
-                onSelected: (bool selected) {
-                  setState(() {
-                    if (selected) {
-                      _selectedDiseases.add(item);
-                    } else {
-                      _selectedDiseases.remove(item);
-                    }
-                  });
-                },
-                backgroundColor: AppColors.lightGrey,
-                selectedColor: AppColors.accent.withOpacity(0.5),
-              );
-            }).toList(),
+            children: [
+              ..._diseaseOptions.map((item) {
+                return FilterChip(
+                  label: Text(item, style: AppTextStyles.chip),
+                  selected: _selectedDiseases.contains(item),
+                  onSelected: (selected) {
+                    setState(() {
+                      selected
+                          ? _selectedDiseases.add(item)
+                          : _selectedDiseases.remove(item);
+                    });
+                  },
+                  backgroundColor: AppColors.lightGrey,
+                  selectedColor: AppColors.accent.withOpacity(0.5),
+                );
+              }),
+              // Custom Added Chips
+              ..._selectedDiseases
+                  .where((d) => !_diseaseOptions.contains(d))
+                  .map((custom) {
+                    return Chip(
+                      label: Text(custom, style: AppTextStyles.chip),
+                      backgroundColor: AppColors.accent.withOpacity(0.5),
+                      onDeleted: () =>
+                          setState(() => _selectedDiseases.remove(custom)),
+                    );
+                  }),
+            ],
+          ),
+          const SizedBox(height: 10),
+          _buildAddOptionField(
+            hintText: "Add disease...",
+            controller: _customDiseaseController,
+            onAdd: (val) => setState(() {
+              if (!_selectedDiseases.contains(val)) _selectedDiseases.add(val);
+            }),
           ),
         ],
       ),
@@ -392,21 +537,26 @@ class _UserInfoFormState extends State<UserInfoForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 1. Goal (Single Selection)
           Text('Health Goal', style: AppTextStyles.subtitle),
+          const SizedBox(height: 10),
+          Text('Select your primary goal.', style: AppTextStyles.body),
           const SizedBox(height: 16),
-          Text('Select your primary health goal.', style: AppTextStyles.body),
-          const SizedBox(height: 16),
+          // A. Default Chips
           Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
             children: _goalOptions.map((goal) {
               return ChoiceChip(
                 label: Text(goal, style: AppTextStyles.chip),
+                // It is selected if it matches the _selectedGoal variable
                 selected: _selectedGoal == goal,
                 onSelected: (bool selected) {
                   setState(() {
                     if (selected) {
                       _selectedGoal = goal;
+                      _customGoalController
+                          .clear(); // Clear the text if a chip is selected
                     }
                   });
                 },
@@ -414,6 +564,67 @@ class _UserInfoFormState extends State<UserInfoForm> {
                 selectedColor: AppColors.accent.withOpacity(0.5),
               );
             }).toList(),
+          ),
+          const SizedBox(height: 16),
+          // B. Input for Custom Goal ("Other")
+          TextField(
+            controller: _customGoalController,
+            decoration: InputDecoration(
+              hintText: "Or type your own goal",
+              prefixIcon: const Icon(
+                Icons.edit_note,
+                color: AppColors.secondary,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              filled: true,
+              fillColor: AppColors.lightGrey.withOpacity(0.3),
+            ),
+            onChanged: (value) {
+              setState(() {
+                // If typing, the goal is what is being typed
+                _selectedGoal = value;
+                // By changing _selectedGoal to a value not in the _goalOptions list,
+                // the ChoiceChips above are automatically deselected.
+              });
+            },
+          ),
+
+          const SizedBox(height: 24),
+
+          // 2. Frequency (Single Selection)
+          Text('Check-in Frequency', style: AppTextStyles.subtitle),
+          const SizedBox(height: 10),
+          Text(
+            'How often should we review your goal?',
+            style: AppTextStyles.body,
+          ),
+          const SizedBox(height: 16),
+
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedFrequency,
+                isExpanded: true,
+                items: _frequencyOptions.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedFrequency = newValue!;
+                  });
+                },
+              ),
+            ),
           ),
         ],
       ),

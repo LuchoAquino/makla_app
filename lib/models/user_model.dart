@@ -9,6 +9,7 @@ class UserModel {
   final double height;
   final String gender;
   final String goal;
+  final String checkInFrequency;
   final DateTime? createdAt;
 
   final List<String> purposes;
@@ -24,6 +25,7 @@ class UserModel {
     required this.height,
     required this.gender,
     required this.goal,
+    required this.checkInFrequency,
     this.purposes = const [],
     this.restrictions = const [],
     this.diseases = const [],
@@ -52,6 +54,7 @@ class UserModel {
       'height': height,
       'gender': gender,
       'goal': goal,
+      'checkInFrequency': checkInFrequency,
       'purposes': purposes,
       'restrictions': restrictions,
       'diseases': diseases,
@@ -75,6 +78,7 @@ class UserModel {
       height: (data['height'] ?? 0).toDouble(),
       gender: data['gender'] ?? '',
       goal: data['goal'] ?? '',
+      checkInFrequency: data['checkInFrequency'] ?? '',
       purposes: List<String>.from(data['purposes'] ?? []),
       restrictions: List<String>.from(data['restrictions'] ?? []),
       diseases: List<String>.from(data['diseases'] ?? []),
@@ -94,6 +98,7 @@ class UserModel {
     double? height,
     String? gender,
     String? goal,
+    String? checkInFrequency,
     List<String>? purposes,
     List<String>? restrictions,
     List<String>? diseases,
@@ -108,6 +113,7 @@ class UserModel {
       height: height ?? this.height,
       gender: gender ?? this.gender,
       goal: goal ?? this.goal,
+      checkInFrequency: checkInFrequency ?? this.checkInFrequency,
       purposes: purposes ?? this.purposes,
       restrictions: restrictions ?? this.restrictions,
       diseases: diseases ?? this.diseases,

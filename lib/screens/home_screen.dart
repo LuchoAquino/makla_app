@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:makla_app/utils/app_theme.dart';
+import 'package:provider/provider.dart';
+import 'package:makla_app/providers/db_user_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   final ValueChanged<int> onNavigateToTab;
@@ -7,9 +9,11 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dummy user name
-    const String userName = 'Luis';
+    // 1. Get the user from the provider
+    final user = Provider.of<DbUserProvider>(context).userCurrent;
 
+    // 2. Fallback if user is loading or null
+    final String userName = user?.name ?? 'User';
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

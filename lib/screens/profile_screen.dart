@@ -6,6 +6,8 @@ import 'package:makla_app/providers/auth_provider.dart';
 import 'package:makla_app/providers/db_user_provider.dart'; // Your Logic Layer
 import 'package:makla_app/screens/loading_screen.dart';
 import 'package:makla_app/utils/app_theme.dart';
+import 'package:makla_app/screens/user_info_form.dart';
+import 'package:makla_app/screens/user_data_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -93,13 +95,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: Icons.person_outline,
             title: 'Account',
             onTap: () {
-              // TODO: Navigate to Edit Profile Screen
+              // Navigate to the new UserDataScreen
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const UserDataScreen()),
+              );
             },
           ),
           _buildMenuItem(
             icon: Icons.replay,
             title: 'Do again the Test',
-            onTap: () {},
+            onTap: () {
+              // Navigate to UserInfoForm to update data
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  // We pass the cameras list required by the form
+                  builder: (context) => UserInfoForm(cameras: widget.cameras),
+                ),
+              );
+            },
           ),
           _buildMenuItem(icon: Icons.help_outline, title: 'Help', onTap: () {}),
           _buildMenuItem(

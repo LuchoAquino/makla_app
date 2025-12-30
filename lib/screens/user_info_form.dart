@@ -85,6 +85,56 @@ class _UserInfoFormState extends State<UserInfoForm> {
   String? _selectedFrequency;
 
   @override
+  void initState() {
+    super.initState();
+
+    // 1. Get current user from Provider (without listening to future changes)
+    final user = Provider.of<DbUserProvider>(
+      context,
+      listen: false,
+    ).userCurrent;
+
+    // 2. If user exists, pre-fill the form
+    if (user != null) {
+      // --- Simple Data ---
+      // Convert numbers to String for text controllers
+      _heightController.text = user.height > 0 ? user.height.toString() : '';
+      _weightController.text = user.weight > 0 ? user.weight.toString() : '';
+
+      // Gender: Check if the saved value is in our options list
+      if (_genders.contains(user.gender)) {
+        _selectedGender = user.gender;
+      }
+
+      // Date: Simply assign
+      _selectedDateBirthday = user.dateOfBirth;
+
+      // --- Lists (Chips) ---
+      // IMPORTANT: Use .addAll to copy values
+      _selectedPurposes.addAll(user.purposes);
+      _selectedRestrictions.addAll(user.restrictions);
+      _selectedDiseases.addAll(user.diseases);
+
+      // --- Goal and Custom Logic ---
+      _selectedGoal = user.goal;
+
+      // If the saved goal is NOT in the options list (meaning it was custom)
+      // then we fill the "Other" text field
+      if (user.goal.isNotEmpty && !_goalOptions.contains(user.goal)) {
+        _customGoalController.text = user.goal;
+      }
+
+      // --- Frequency ---
+      // Verify that the saved value is valid for the Dropdown
+      if (_frequencyOptions.contains(user.checkInFrequency)) {
+        _selectedFrequency = user.checkInFrequency;
+      } else {
+        _selectedFrequency = 'Monthly'; // Default fallback
+      }
+    }
+  }
+
+  @override
   void dispose() {
     // "Delete" all the controllers to free up resources
     _pageController.dispose();

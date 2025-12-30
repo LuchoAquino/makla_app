@@ -7,6 +7,7 @@ import 'package:makla_app/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:makla_app/providers/db_user_provider.dart';
 import 'package:makla_app/models/user_model.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // We use StatefulWidget because the screen changes over time (login/sign-up toggle).
 class LoginScreen extends StatefulWidget {
@@ -22,6 +23,16 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  String _formatName(String fullName) {
+    if (fullName.isEmpty) return "User";
+    List<String> parts = fullName.trim().split(' ');
+
+    if (parts.length > 2) {
+      return "${parts[0]} ${parts[1]}";
+    }
+    return fullName;
+  }
 
   @override
   // Defines UI layout -> full screen layout: background, app bar, body
@@ -123,8 +134,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Note: Age/Weight/Height are 0 for now because we fill them in TestScreen
                 UserModel newUser = UserModel(
                   id: userCredential.user!.uid,
-                  name: _nameController.text.trim(),
+                  name: _formatName(_nameController.text.trim()),
                   email: _emailController.text.trim(),
+                  photoUrl: "",
                   dateOfBirth: DateTime(2000, 1, 1),
                   weight: 0.0,
                   height: 0.0,
@@ -181,29 +193,90 @@ class _LoginScreenState extends State<LoginScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Google Button
-            IconButton(
-              iconSize: 48,
-              onPressed: () {
-                print('Google Sign In');
-              },
-              icon: Image.asset(
-                'assets/icons/google_icon.png',
-                errorBuilder: (c, e, s) => const Icon(Icons.g_mobiledata),
+            // --- GOOGLE BUTTON ---
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                iconSize: 32,
+                icon: const FaIcon(
+                  FontAwesomeIcons.google,
+                  color: Colors.red, // Google Brand Color
+                ),
+                onPressed: () async {
+                  try {
+                    // 1. Sign In and Capture Credentials
+                    final userCredential = await authService.value
+                        .signInWithGoogle();
+
+                    if (!mounted) return;
+
+                    // 2. Check if it is a NEW USER
+                    if (userCredential.additionalUserInfo?.isNewUser ?? false) {
+                      // --- NEW USER FLOW ---
+
+                      // A. Create the Data Model
+                      UserModel newUser = UserModel(
+                        id: userCredential.user!.uid,
+                        name: _formatName(
+                          userCredential.user!.displayName ?? "New User",
+                        ),
+                        email: userCredential.user!.email ?? "",
+                        photoUrl: userCredential.user!.photoURL ?? "",
+                        dateOfBirth: DateTime(2000, 1, 1),
+                        weight: 0.0,
+                        height: 0.0,
+                        gender: "",
+                        goal: "",
+                        checkInFrequency: "",
+                        purposes: [],
+                        restrictions: [],
+                        diseases: [],
+                        createdAt: DateTime.now(),
+                      );
+
+                      // B. Save to Firestore
+                      if (context.mounted) {
+                        await Provider.of<DbUserProvider>(
+                          context,
+                          listen: false,
+                        ).saveNewUser(newUser);
+                      }
+
+                      // C. Redirect to Form (PreTestScreen)
+                      if (mounted) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                PreTestScreen(cameras: widget.cameras),
+                          ),
+                        );
+                      }
+                    } else {
+                      // --- EXISTING USER FLOW ---
+                      if (mounted) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                MainScreen(cameras: widget.cameras),
+                          ),
+                        );
+                      }
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Google Sign In Error: $e")),
+                      );
+                    }
+                  }
+                },
               ),
             ),
-            const SizedBox(width: 20),
-            // Facebook Button
-            IconButton(
-              iconSize: 48,
-              onPressed: () {
-                print('Facebook Sign In');
-              },
-              icon: Image.asset(
-                'assets/icons/facebook_icon.png',
-                errorBuilder: (c, e, s) => const Icon(Icons.facebook),
-              ),
-            ),
+
+            // ELIMINADO: SizedBox y Botón de Facebook
           ],
         ),
       ],

@@ -87,6 +87,8 @@ class DbUserProvider extends ChangeNotifier {
         purposes: data['purposes'] ?? _userCurrent!.purposes,
         restrictions: data['restrictions'] ?? _userCurrent!.restrictions,
         diseases: data['diseases'] ?? _userCurrent!.diseases,
+        photoUrl:
+            data['photoUrl'] ?? _userCurrent!.photoUrl, // <--- Future-proofing
       );
     } catch (e) {
       debugPrint("Error updating user: $e");

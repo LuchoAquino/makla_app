@@ -62,10 +62,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 30),
-                const CircleAvatar(
+
+                // PROFILE PICTURE (Placeholder)
+                CircleAvatar(
                   radius: 60,
                   backgroundColor: AppColors.secondary,
-                  child: Icon(Icons.person, size: 80, color: AppColors.white),
+                  // If there's a URL, show the image. If not, show null (and the child takes effect)
+                  backgroundImage: user.photoUrl.isNotEmpty
+                      ? NetworkImage(user.photoUrl)
+                      : null,
+                  child: user.photoUrl.isEmpty
+                      ? const Icon(
+                          Icons.person,
+                          size: 80,
+                          color: AppColors.white,
+                        )
+                      : null, // If there's a background image, don't show the icon
                 ),
                 const SizedBox(height: 15),
                 // REAL NAME

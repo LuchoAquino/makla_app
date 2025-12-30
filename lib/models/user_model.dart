@@ -4,6 +4,7 @@ class UserModel {
   final String id;
   final String name;
   final String email;
+  final String photoUrl;
   final DateTime dateOfBirth;
   final double weight;
   final double height;
@@ -20,6 +21,7 @@ class UserModel {
     required this.id,
     required this.name,
     required this.email,
+    this.photoUrl = '',
     required this.dateOfBirth,
     required this.weight,
     required this.height,
@@ -49,6 +51,7 @@ class UserModel {
     return {
       'name': name,
       'email': email,
+      'photoUrl': photoUrl,
       'dateOfBirth': Timestamp.fromDate(dateOfBirth),
       'weight': weight,
       'height': height,
@@ -73,6 +76,7 @@ class UserModel {
       id: document.id,
       name: data['name'] ?? '',
       email: data['email'] ?? '',
+      photoUrl: data['photoUrl'] ?? '',
       dateOfBirth: (data['dateOfBirth'] as Timestamp).toDate(),
       weight: (data['weight'] ?? 0).toDouble(),
       height: (data['height'] ?? 0).toDouble(),
@@ -93,6 +97,7 @@ class UserModel {
     String? id,
     String? name,
     String? email,
+    String? photoUrl,
     DateTime? dateOfBirth,
     double? weight,
     double? height,
@@ -108,6 +113,7 @@ class UserModel {
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
+      photoUrl: photoUrl ?? this.photoUrl,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       weight: weight ?? this.weight,
       height: height ?? this.height,

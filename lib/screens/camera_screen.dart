@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:makla_app/utils/app_theme.dart';
+import 'package:makla_app/screens/meal_result_screen.dart';
 
 class CameraScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -63,10 +64,18 @@ class _CameraScreenState extends State<CameraScreen> {
                       try {
                         await _initializeControllerFuture;
                         final image = await _controller.takePicture();
-                        // TODO: Navigate to result screen with the image path
-                        print('Picture saved to ${image.path}');
+
+                        // NAVEGACIÓN A LA PANTALLA DE RESULTADOS
+                        if (context.mounted) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  MealResultScreen(imagePath: image.path),
+                            ),
+                          );
+                        }
                       } catch (e) {
-                        print(e);
+                        print('Error taking picture: $e');
                       }
                     },
                     backgroundColor: AppColors.white,

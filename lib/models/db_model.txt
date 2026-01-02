@@ -27,3 +27,13 @@ Firestore
                     ├── fat: number
                     ├── fiber: number
                     └── sugar: number
+
+
+
+Fireastore
+- users
+        - id
+        - name
+        - email
+
+    - Meals

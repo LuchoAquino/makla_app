@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
+import '../models/meal_model.dart';
 
 // Store, Fetch, Update user data in Firestore
 class DbUserProvider extends ChangeNotifier {
@@ -93,6 +94,35 @@ class DbUserProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint("Error updating user: $e");
       rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // 4. ADD MEAL (NUEVO MÉTODO)
+  Future<void> addMeal(MealModel meal) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      if (_userCurrent == null) throw "No user logged in";
+
+      // Referencia a la subcolección 'meals' dentro del documento del usuario
+      // users -> {userId} -> meals -> {mealId}
+      final docRef = _db
+          .collection("users")
+          .doc(_userCurrent!.id)
+          .collection("meals")
+          .doc(); // .doc() vacío genera un ID automático
+
+      // Guardamos la comida
+      await docRef.set(meal.toJson());
+
+      debugPrint("Meal saved successfully with ID: ${docRef.id}");
+    } catch (e) {
+      debugPrint("Error adding meal: $e");
+      rethrow; // Re-lanzamos el error para que la pantalla pueda mostrar un SnackBar
     } finally {
       _isLoading = false;
       notifyListeners();

@@ -6,6 +6,10 @@ import 'package:makla_app/screens/home_screen.dart';
 import 'package:makla_app/screens/profile_screen.dart';
 import 'package:makla_app/utils/app_theme.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:makla_app/providers/db_user_provider.dart';
+import 'package:provider/provider.dart';
+
 class MainScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
   const MainScreen({super.key, required this.cameras});
@@ -22,6 +26,16 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+
+    // INITIAL DATA FETCH
+    // This ensures userCurrent exists for all screens (Home, Scan, Chat)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid != null) {
+        Provider.of<DbUserProvider>(context, listen: false).getUserData(uid);
+      }
+    });
+
     _pages = [
       HomeScreen(onNavigateToTab: _onItemTapped),
       CameraScreen(cameras: widget.cameras),

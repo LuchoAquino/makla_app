@@ -7,10 +7,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:makla_app/firebase_options.dart';
 import 'package:makla_app/providers/db_user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   // Main function is Future because I'm working with async function
   WidgetsFlutterBinding.ensureInitialized(); // Initializes Flutter before using native plugins
+
+  await dotenv.load(fileName: ".env"); // Load environment variables
 
   final cameras = await availableCameras();
 

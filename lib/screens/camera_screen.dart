@@ -63,10 +63,22 @@ class _CameraScreenState extends State<CameraScreen> {
                       try {
                         await _initializeControllerFuture;
                         final image = await _controller.takePicture();
-                        // TODO: Navigate to result screen with the image path
-                        print('Picture saved to ${image.path}');
+                        
+                        // Navigate to result screen with the captured image
+                        if (mounted) {
+                          Navigator.pushNamed(
+                            context,
+                            '/result',
+                            arguments: {'imagePath': image.path},
+                          );
+                        }
                       } catch (e) {
-                        print(e);
+                        print('Error taking picture: $e');
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error taking picture: $e')),
+                          );
+                        }
                       }
                     },
                     backgroundColor: AppColors.white,

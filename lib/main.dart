@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:makla_app/providers/auth_gate.dart';
+import 'package:makla_app/screens/result_screen.dart';
 import 'package:makla_app/utils/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:makla_app/firebase_options.dart';
@@ -59,7 +60,12 @@ class MyApp extends StatelessWidget {
       ),
       // home: LoadingScreen(cameras: cameras),
       home: AuthGate(cameras: cameras),
-
+      routes: {
+        '/result': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return ResultScreen(imagePath: args['imagePath']);
+        },
+      },
       debugShowCheckedModeBanner: false, // Removes debug banner
     );
   }

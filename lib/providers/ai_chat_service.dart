@@ -42,7 +42,7 @@ class OpenAIService {
         body: jsonEncode({
           'model': AppConfig.AIModel,
           'messages': messages,
-          'max_completion_tokens': 2000,  // ✅ Fixed for gpt-5-nano
+          'max_completion_tokens': 2000,  
           'stream': false,
         }),
       );

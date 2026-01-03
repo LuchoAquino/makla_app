@@ -4,6 +4,27 @@ This is a Flutter application for **MaklaApp**. This guide will help you set up 
 
 ---
 
+## ⚙️ Environment Setup
+
+Before running the app, you need to set up your environment variables:
+
+1. **Copy the environment template:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Edit the `.env` file** and add your actual API keys:
+   ```env
+   AI_API_KEY=your_openai_api_key_here
+   AI_BASE_URL=https://api.openai.com/v1/
+   AI_MODEL=gpt-4o
+   GEMINI_API_KEY=your_gemini_api_key_here
+   ```
+
+3. **Never commit the `.env` file** to version control - it's already added to `.gitignore`
+
+---
+
 ## 1️⃣ Prerequisites
 
 Before running the app, make sure you have:

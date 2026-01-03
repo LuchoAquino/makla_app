@@ -31,6 +31,7 @@ dependencies:
   # Utilities
   cupertino_icons: ^1.0.2        # iOS-style icons
   intl: ^0.18.1                  # Date formatting
+  flutter_dotenv: ^5.1.0         # Environment variables
   
 dev_dependencies:
   flutter_test:
@@ -39,4 +40,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  
+  # Include the .env file in assets
+  assets:
+    - .env
 

@@ -4,6 +4,27 @@ This is a Flutter application for **MaklaApp**. This guide will help you set up 
 
 ---
 
+## ⚙️ Environment Setup
+
+Before running the app, you need to set up your environment variables:
+
+1. **Copy the environment template:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Edit the `.env` file** and add your actual API keys:
+   ```env
+   AI_API_KEY=your_openai_api_key_here
+   AI_BASE_URL=https://api.openai.com/v1/
+   AI_MODEL=gpt-4o
+   GEMINI_API_KEY=your_gemini_api_key_here
+   ```
+
+3. **Never commit the `.env` file** to version control - it's already added to `.gitignore`
+
+---
+
 ## 1️⃣ Prerequisites
 
 Before running the app, make sure you have:
@@ -171,33 +192,55 @@ flutter run -d edge
 
 ```
 makla_app/
-├── assets/                      # Static files (images, icons, logos)
-│   ├── images/                  # Large images (backgrounds, food placeholders)
-│   └── icons/                   # Small SVGs or PNG icons (camera icon, menu icon)
+├── assets/                     # Static files (images, icons)
+│   ├── icons/                  # Small SVGs or PNG icons
+│   └── images/                 # Large images (backgrounds, food placeholders)
 │
-├── lib/                         # Main Application Code
-│   ├── main.dart                # The entry point of the app (App start)
+├── lib/                        # Main Application Code
+│   ├── main.dart               # The entry point of the app
+│   ├── firebase_options.dart   # Firebase configuration options
 │   │
-│   ├── models/                  # Data Blueprints (No logic, just data structure)
-│   │   ├── user_model.dart      # Defines what a "User" looks like (name, goal, weight)
-│   │   └── meal_model.dart      # Defines what a "Meal" looks like (calories, ingredients)
+│   ├── models/                 # Data Blueprints (No logic, just data structure)
+│   │   ├── daily_stats_model.dart # Defines daily statistics data
+│   │   ├── db_model.txt        # Database schema documentation (example)
+│   │   ├── meal_model.dart     # Defines what a "Meal" looks like (calories, ingredients)
+│   │   ├── nutrition_model.dart # Defines nutrition data
+│   │   └── user_model.dart     # Defines what a "User" looks like (name, goal, weight)
 │   │
-│   ├── providers/               # State Management & Data Fetching
-│   │   ├── auth_provider.dart   # Handles Firebase Login/Sign-up logic
-│   │   └── gemini_service.dart  # Connects the app to the AI (Gemini/Backend)
+│   ├── providers/              # State Management & Data Fetching
+│   │   ├── ai_chat_service.dart # Service for AI chat functionality
+│   │   ├── auth_gate.dart      # Authentication gate for screen access
+│   │   ├── auth_provider.dart  # Handles Firebase Login/Sign-up logic
+│   │   ├── db_user_provider.dart # Provides user data from database
+│   │   └── gemini_service.dart # Connects the app to the AI (Gemini/Backend)
 │   │
-│   ├── screens/                 # The Visual Pages of the App
-│   │   │   ├── login_screen.dart
-│   │   │   ├── user_info_form.dart
-│   │   │   ├── home_screen.dart    # Daily summary & progress
-│   │   │   ├── camera_screen.dart  # Viewfinder to take photos
-│   │   │   └── result_screen.dart  # Shows the AI analysis results
+│   ├── screens/                # The Visual Pages of the App
+│   │   ├── camera_screen.dart  # Viewfinder to take photos
+│   │   ├── chat_screen.dart    # AI chat interface
+│   │   ├── home_screen.dart    # Daily summary & progress
+│   │   ├── loading_screen.dart # Screen shown during data loading
+│   │   ├── login_screen.dart   # User login interface
+│   │   ├── main_screen.dart    # Main navigation screen
+│   │   ├── meal_result_screen.dart # Shows the AI analysis results for meals
+│   │   ├── pre_test_screen.dart # Screen before a test/assessment
+│   │   ├── profile_screen.dart # User profile management
+│   │   ├── user_data_screen.dart # Displays user-specific data
+│   │   ├── user_info_form.dart # Form for user information input
+│   │   └── welcome_screen.dart # Initial welcome screen
 │   │
-│   └── widgets/                 # Reusable UI Components (Building blocks)
-│       ├── bottom_nav.dart      
-│       └── progress_bar.dart    # The visual bar for daily calorie goals
+│   ├── utils/                  # Utility functions and helpers
+│   │   ├── app_config.dart     # Application configuration settings
+│   │   └── app_theme.dart      # Application theme and styling
+│   │
+│   └── widgets/                # Reusable UI Components (Building blocks)
+│       ├── bottom_nav.dart     # Custom bottom navigation bar
+│       └── progress_bar.dart   # Visual bar for daily calorie goals or progress
 │
-└── pubspec.yaml                 # List of external libraries (plugins) used in the app
+├── .gitignore                  # Specifies intentionally untracked files to ignore
+├── firebase.json               # Firebase project configuration
+├── pubspec.lock                # Records the specific versions of dependencies used
+├── pubspec.yaml                # Project dependencies and metadata
+└── README.md                   # Project README file
 ```
 
 ---

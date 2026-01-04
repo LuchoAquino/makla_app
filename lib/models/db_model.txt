@@ -1,0 +1,36 @@
+Firestore Data Structure for MaklaApp
+
+This document outlines the schema for the Cloud Firestore database.
+
+└── users (collection)
+    └── {userId} (document)
+        ├── name: string
+        ├── email: string
+        ├── photoUrl: string
+        ├── dateOfBirth: timestamp
+        ├── weight: number
+        ├── height: number
+        ├── gender: string
+        ├── goal: string
+        ├── checkInFrequency: string
+        ├── purposes: array<string>
+        ├── restrictions: array<string>
+        ├── diseases: array<string>
+        ├── createdAt: timestamp
+        │
+        └── meals (subcollection)
+            └── {mealId} (document)
+                ├── dishName: string
+                ├── description: string
+                ├── imageUrl: string
+                ├── timestamp: timestamp
+                ├── mealType: string
+                ├── confidence: string
+                ├── ingredients: array<string>
+                └── nutritionalInfo (map)
+                    ├── calories: number
+                    ├── protein: number
+                    ├── carbs: number
+                    ├── fat: number
+                    ├── fiber: number
+                    └── sugar: number
